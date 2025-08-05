@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TheRaa - Bot Bug</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #0f0f0f;
+      color: white;
+      font-family: monospace;
+      overflow-x: hidden;
+    }
+
+    .glitch-background {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 12vw;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 0.02);
+      white-space: nowrap;
+      user-select: none;
+      pointer-events: none;
+      z-index: 0;
+      animation: glitch 2s infinite linear alternate;
+    }
+
+    @keyframes glitch {
+      0%   { transform: translate(-50%, -50%) skew(0deg); }
+      25%  { transform: translate(-50%, -48%) skew(1deg); }
+      50%  { transform: translate(-50%, -52%) skew(-1deg); }
+      75%  { transform: translate(-51%, -50%) skew(0.5deg); }
+      100% { transform: translate(-49%, -50%) skew(-0.5deg); }
+    }
+
+    .page { display: none; }
+    .active { display: block; }
+  </style>
+</head>
+<body class="relative p-4">
+  <div class="glitch-background">TheRaa 🇮🇩🦅</div>
+
+  <div class="relative z-10 max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold text-center mb-4">𝐓𝐡𝐞𝐑𝐚𝐚 - 𝕭𝖔𝖙 𝕭𝖚𝖌</h1>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="page active">
+      <div class="text-center text-xl mb-4">
+        🔥 Telah melayani: <span id="counter" class="font-bold">...</span> serangan bug!
+      </div>
+
+      <!-- Pilihan Paket -->
+      <div class="grid gap-4 mb-8">
+        <div class="p-4 border rounded hover:bg-white hover:text-black">
+          <h2 class="text-lg font-bold">🟢 Paket Lite – Rp 1.000</h2>
+          <p>✅ 1x Bug Invisible<br>💥 Dampak: Chat ke-push, WA kebuka sendiri, lag ringan</p>
+          <button onclick="selectAndOrder('Lite', 1000)" class="mt-2 bg-green-600 px-4 py-1 rounded">Pesan Sekarang</button>
+        </div>
+        <div class="p-4 border rounded hover:bg-white hover:text-black">
+          <h2 class="text-lg font-bold">🟡 Paket Medium – Rp 3.000</h2>
+          <p>✅ Invisible + Error<br>💥 Dampak: WA stuck, lambat, korban curiga</p>
+          <button onclick="selectAndOrder('Medium', 3000)" class="mt-2 bg-green-600 px-4 py-1 rounded">Pesan Sekarang</button>
+        </div>
+        <div class="p-4 border rounded hover:bg-white hover:text-black">
+          <h2 class="text-lg font-bold">🔴 Paket Ganas – Rp 5.000</h2>
+          <p>✅ Invisible + Error + Max<br>💥 Dampak: WA freeze, crash, HP berat</p>
+          <button onclick="selectAndOrder('Ganas', 5000)" class="mt-2 bg-green-600 px-4 py-1 rounded">Pesan Sekarang</button>
+        </div>
+      </div>
+
+      <!-- Testimoni -->
+      <h2 class="text-xl font-bold mb-3">💬 Testimoni</h2>
+      <div class="mb-6 space-y-2" id="testimoniList">
+        <p>“paket Medium kerasa banget gila😭” – @hanz</p>
+        <p>“next lagi dah, keren jir” – @user123</p>
+      </div>
+
+      <div>
+        <input type="text" id="newName" placeholder="Nama" class="w-full p-2 rounded bg-black border mb-2" />
+        <textarea id="newComment" placeholder="Isi testimoni" class="w-full p-2 rounded bg-black border mb-2"></textarea>
+        <button onclick="addTestimoni()" class="w-full bg-blue-600 hover:bg-blue-700 p-2 rounded">➕ Tambah Testimoni</button>
+      </div>
+    </div>
+
+    <!-- FORM ORDER -->
+    <div id="orderPage" class="page">
+      <h2 class="text-xl font-bold mb-4">📋 Formulir Pemesanan</h2>
+      <label>📱 Nomor Target</label>
+      <input type="text" id="target" class="w-full p-2 rounded bg-black border mb-4" placeholder="628xxxxx" />
+      <label>🧑 Nama (samaran)</label>
+      <input type="text" id="name" class="w-full p-2 rounded bg-black border mb-4" />
+      <label>📍 Tahu dari mana?</label>
+      <select id="source" class="w-full p-2 rounded bg-black border mb-6">
+        <option value="TikTok">TikTok</option>
+        <option value="Instagram">Instagram</option>
+        <option value="Teman">Teman</option>
+        <option value="Lainnya">Lainnya</option>
+      </select>
+      <button onclick="confirmOrder()" class="w-full bg-green-600 p-3 rounded font-bold">✅ Konfirmasi Order</button>
+      <button onclick="goToDashboard()" class="w-full mt-2 bg-gray-600 p-2 rounded">🔙 Kembali</button>
+    </div>
+  </div>
+
+  <script>
+    // Hitung jumlah serangan
+    const startTime = new Date('2025-08-05T08:00:00Z');
+    const now = new Date();
+    const minutesPassed = Math.floor((now - startTime) / (1000 * 60));
+    const base = 3;
+    const counter = base + Math.max(0, Math.floor(minutesPassed / 30));
+    document.getElementById('counter').textContent = counter;
+
+    let selectedPackage = '';
+    let selectedPrice = 0;
+
+    function selectAndOrder(paket, harga) {
+      selectedPackage = paket;
+      selectedPrice = harga;
+      document.getElementById('dashboard').classList.remove('active');
+      document.getElementById('orderPage').classList.add('active');
+    }
+
+    function goToDashboard() {
+      document.getElementById('orderPage').classList.remove('active');
+      document.getElementById('dashboard').classList.add('active');
+    }
+
+    function confirmOrder() {
+      const target = document.getElementById('target').value;
+      const name = document.getElementById('name').value;
+      const source = document.getElementById('source').value;
+
+      if (!target || !name || !source || !selectedPackage) {
+        alert('❌ Lengkapi semua data dan pilih paket!');
+        return;
+      }
+
+      const message = `🛒 *ORDER JASA BUG WHATSAPP*\n\n📦 Paket: ${selectedPackage} (Rp ${selectedPrice.toLocaleString()})\n📱 Target: ${target}\n🧑 Nama: ${name}\n📍 Tahu dari: ${source}\n\nMohon kirimkan QRIS untuk pembayaran.`;
+      const waUrl = `https://wa.me/6289524333228?text=${encodeURIComponent(message)}`;
+      window.open(waUrl, '_blank');
+    }
+
+    function addTestimoni() {
+      const name = document.getElementById('newName').value.trim();
+      const comment = document.getElementById('newComment').value.trim();
+      if (name && comment) {
+        const entry = document.createElement('p');
+        entry.textContent = `“${comment}” – @${name}`;
+        document.getElementById('testimoniList').appendChild(entry);
+        document.getElementById('newName').value = '';
+        document.getElementById('newComment').value = '';
+      } else {
+        alert('Isi nama dan komentarnya ya!');
+      }
+    }
+  </script>
+</body>
+</html>
